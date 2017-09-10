@@ -18,15 +18,19 @@ mysqli_query($conn , 'SET CHARACTER SET utf8');
 $email = $array['email'];
 $password = $array['password'];
 
-//  $email = 'test@gmail.com';
-//  $password = 'test123';
 
     $result = $conn->query("SELECT * FROM user where email='$email' and password='$password'");
     $user="";
     if($result->num_rows !=0){
-        while($rs = $result->fetch_array(MYSQLI_ASSOC)) {
-            $user=$rs;
-        }
+        $rs = mysqli_fetch_array($result);
+            
+            if($rs["attest"]==1){
+                $user=$rs;
+            }else{
+                $user="undone";
+            }
+            
+        
     }
 
 $final=array("user"=>$user);
