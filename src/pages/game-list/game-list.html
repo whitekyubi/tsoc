@@ -6,23 +6,22 @@
 -->
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="transparent" class="nav">
     <ion-title>遊戲列表</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
-<ion-content padding>
-	<ion-card>
-		<ion-card-header>
+<ion-content padding class="content">
+	<ion-card class="gameCard" (click)='startGame()'>
+		<ion-card-header class="gameName">
 			遊戲名稱
 		</ion-card-header>
-		<ion-card-content>
+		<ion-card-content class="gameContent">
 			遊戲地點：嘉義市區<br>
 			遊戲時間：?小時~?小時<br>
-			遊戲介紹：~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-			<button ion-button (click)='startGame()'>開始遊戲</button>
+			<!-- <button ion-button >開始遊戲</button> -->
 		</ion-card-content>
 	</ion-card>
 </ion-content>

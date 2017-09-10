@@ -34,18 +34,6 @@
         <ion-input [value]="userInfo.name" [(ngModel)]="userInfo.name" formControlName="name" type="text" id="name" spellcheck="false" autocapitalize="off">
         </ion-input>
       </ion-item>
-      
-      <ion-row>
-        <ion-col class='image_col'>
-          <ion-label color="dark" stacked>更改大頭貼照片</ion-label>
-          <button class='image_icon' ion-button (click)="getPicture(0)">
-            <ion-icon name="images"></ion-icon>
-          </button>
-          <button class='image_icon' ion-button (click)="getPicture(1)">
-            <ion-icon name="camera"></ion-icon>
-          </button>
-        </ion-col>
-      </ion-row>
     </form>
   </ion-list>
 

@@ -1,3 +1,37 @@
 page-game-list {
 
+	.nav{
+		font-family: Microsoft JhengHei;
+		text-align: center;
+	}
+
+	.content{
+		background-image: url('../assets/img/content-background.png');
+		background-repeat:no-repeat;
+		// background: url('../../assets/img/content-background.png') no-repeat;
+		background-size: 100% 100%;
+	}
+	.gameCard{
+		background-image: url('../assets/img/card-background.png');
+		background-repeat:no-repeat;
+		// background: url('../../assets/img/card-background.png') no-repeat;
+		background-size: 100% 100%;
+		height: 335px;
+		border-radius: 20px;
+		font-family: Microsoft JhengHei;
+		color: #fff;
+		box-shadow: 3px 3px 30px 12px rgba(0,0,0,0.2);
+	} 
+
+	.gameName{
+		text-align: center;
+		font-size: 25px;
+		font-weight: bold;
+		color: #fff;
+	}
+
+	.gameContent{
+		margin-left: 10%; 
+		font-size: 17px;
+	}
 }

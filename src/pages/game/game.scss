@@ -43,8 +43,12 @@ page-game {
 			top: 35%;
 			left: 35%;
 			margin: 0px;
-
+			border-style:solid;
 		}
+	}
+
+	.touchOne{
+		position: relative;
 	}
 
 	.dialogText{
@@ -56,6 +60,7 @@ page-game {
 		margin-bottom: 0px;
 		padding-left: 15px;
 		padding-right: 15px;
+		font-size:18px;
 
 	}
 }

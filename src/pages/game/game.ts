@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, AlertController, ToastController, ActionSheetController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, ToastController, ViewController, ActionSheetController, ModalController, Platform } from 'ionic-angular';
 import { MenuPage } from '../menu/menu';
 import { Storage } from '@ionic/storage'; //儲存登入紀錄
 import { LocationTracker } from '../../providers/location-tracker';
@@ -49,6 +49,10 @@ export class GamePage {
 		final: '6',
 		end: '7'
 	};
+	//高雄
+	// gamelat = [22.581964, 22.583510, 22.583416, 22.583416, 22.583416, 22.583416, 22.583416, 22.583416, 22.582009];//7-11,幼兒園,桂陽公園
+	// gamelng = [120.353812, 120.351817, 120.350752, 120.350752, 120.350752, 120.350752, 120.350752, 120.350752, 120.351656];
+	// txt;
 
 	gamelat = [23.48667, 23.48133, 23.48293333430657, 23.48391805163077, 23.48163149596133, 23.4805181204497, 23.48019397738388, 23.48393893130969, 23.487297];//檜意森活村,嘉義公園1,嘉義公園2,嘉義公園3,嘉義公園4,嘉義公園5,北門驛
 	gamelng = [120.4541, 120.4688, 120.4636054252927, 120.4634096084258, 120.466573922442, 120.4668337706267, 120.4686608826058, 120.4678115890025, 120.454646];
@@ -70,10 +74,18 @@ export class GamePage {
 		"共和路191巷5號",
 		"北門街2號",
 		"",
-		"自畫像、兒童樂園、嘉義公園（一）、嘉義公園（二）、嘉義公園（三）、嘉義公園（四）、嘉義公園一景、嘉義公園一隅、睡蓮",
+		"自畫像",
+		"兒童樂園",
+		"嘉義公園（一）",
+		"嘉義公園（二）",
+		"嘉義公園（三）",
+		"嘉義公園（四）",
+		"嘉義公園一景",
+		"嘉義公園一隅",
+		"睡蓮",
 		"林運"
 	];
-
+	//"自畫像、兒童樂園、嘉義公園（一）、嘉義公園（二）、嘉義公園（三）、嘉義公園（四）、嘉義公園一景、嘉義公園一隅、睡蓮"
 	gameQue = [
 		"請解開謎題",
 		"請玩家前往園區T21的位置，並輸入門牌地址。",
@@ -85,15 +97,17 @@ export class GamePage {
 	gameimg = [
 		"http://140.123.175.96:8080/tsoc/img/img0.jpg",//[配一張吳明捷的照片]
 		"http://140.123.175.96:8080/tsoc/img/img1.png",//[配一張嘉義地圖]
-		"[配一張鑰匙和謎題的圖片]",
+		"http://140.123.175.96:8080/tsoc/img/21.png",//[配一張鑰匙和謎題的圖片]
 		"http://iphoto.ipeen.com.tw/photo/comment/201011/cgmc7ef61d6f9a8d9faf66bef25830dc834763.jpg",//(射日塔的局部圖片)
 		"https://chiayi.itour.org.tw/media/poi_img/C1_376600000A_000018/309e055c-f65c-4ae8-8a7a-0c8d023891a9_large.jpg",//(射日塔的圖片)
 		"http://140.123.175.96:8080/tsoc/img/img5.jpg",//[配日治時期噴水池照片]
-		"http://140.123.175.96:8080/tsoc/img/img6.jpg"//[配上中央噴水池的圖片]
+		"http://140.123.175.96:8080/tsoc/img/img6.jpg",//[配上中央噴水池的圖片]
+		"http://140.123.175.96:8080/tsoc/img/mother.png",//媽媽
+		"http://140.123.175.96:8080/tsoc/img/little girl.png"//小女孩
 	];
 
 
-	constructor(public actionSheetCtrl: ActionSheetController, private toastCtrl: ToastController, public alertCtrl: AlertController, public zone: NgZone, private backgroundGeolocation: BackgroundGeolocation, private geolocation: Geolocation, public navCtrl: NavController, public http: Http, public navParams: NavParams, public storage: Storage) {
+	constructor(public modalCtrl: ModalController, public actionSheetCtrl: ActionSheetController, private toastCtrl: ToastController, public alertCtrl: AlertController, public zone: NgZone, private backgroundGeolocation: BackgroundGeolocation, private geolocation: Geolocation, public navCtrl: NavController, public http: Http, public navParams: NavParams, public storage: Storage) {
 		this.storyScript = {
 			start: [],
 			middle: [],
@@ -153,9 +167,9 @@ export class GamePage {
 			"我：小妹妹，你怎麼了？",
 			"小女孩：我迷路了，可不可以幫我找我的媽媽，媽媽有說要帶我去圖片裡的地方玩，拜託。img3",
 			"Puzzle3",
-			"女孩母親：啊！很感謝你帶她來這裡。img4",
-			"我：不會，這是應該的。話說...這棟建築物是什麼啊？",
-			"女孩母親：這是射日塔。",
+			"女孩母親：啊！很感謝你帶她來這裡。img7",
+			"我：不會，這是應該的。話說...這棟建築物是什麼啊？img4",
+			"女孩母親：這是射日塔。img7",
 			"女孩母親：相傳在太古之時，天空中有兩個太陽輪流出現，因此天氣非常酷熱，於是有勇士自告奮勇要將這太陽射下來。因為到太陽的路非常遙遠，所以他出發時背著一位嬰孩，勇士死去後長大的小孩繼承當初的使命繼續前進，之後終於成功射下太陽，完成任務。",
 			"我：聽起來和后羿的故事蠻像的。",
 			"女孩母親：早期流傳不少類似的故事，像射日塔和后羿都是其中一種，除此之外也還有很多類似的故事呢！",
@@ -165,7 +179,7 @@ export class GamePage {
 			"女孩母親：我這裡也有張日治時期的照片，或許你去公園裡的史蹟資料館會有線索吧。img5",
 			"我：謝謝你，再見。",
 			"小女孩：掰掰～",
-			"女孩母親：再見～",
+			"女孩母親：再見～img7",
 			"我：只靠一張照片找人果然有點難啊...",
 			"路人甲：聽說這公園放了不少陳澄波畫架，你可知道是為什麼嗎？",
 			"路人乙：這還不簡單！一定是因為要紀念陳澄波阿，他的作品《淡水夕照》在拍賣場上可是以約新台幣2.2億成交。",
@@ -425,13 +439,18 @@ export class GamePage {
 							newgamelat.push(this.gamelat[0]);
 							newgamelng.push(this.gamelng[0]);
 						} else if (stage[key] == 4) {
+
 							for (let i = 1; i < 8; i++) {
 								newgamelat.push(this.gamelat[i]);
 								newgamelng.push(this.gamelng[i]);
 							}
+
 						} else if (stage[key] == 5) {
+
+
 							newgamelat.push(this.gamelat[8]);
 							newgamelng.push(this.gamelng[8]);
+
 						}
 					}
 					this.startTracking(newgamelat, newgamelng);
@@ -482,7 +501,7 @@ export class GamePage {
 		this.countScript = 0;
 		this.dialogText = this.nowScript[this.countScript++];
 		document.querySelector(".gameWindow").innerHTML = `
-		<img src="http://140.123.175.96:8080/tsoc/img/1476.jpg">`;
+		<img src="http://140.123.175.96:8080/tsoc/img/little girl.png">`;
 	}
 
 	//北門車站
@@ -500,7 +519,7 @@ export class GamePage {
 				let img = "https://chiayi.itour.org.tw/media/" + data.scenery_list[0].image[0].file_path + "_large.jpg";
 				document.querySelector(".gameWindow").innerHTML = `
 						<img src="`+ img + `">`;
-						console.log(img);
+				console.log(img);
 
 			}, error => {
 				console.log(error);
@@ -513,6 +532,7 @@ export class GamePage {
 		this.countScript = 0;
 		this.dialogText = this.nowScript[this.countScript++];
 	}
+
 	loadEnd() {
 		this.nowScript = this.storyScript.end;
 		this.countScript = 0;
@@ -565,8 +585,8 @@ export class GamePage {
 						this.end = 1;
 						this.dialogText = this.nowScript[this.countScript].slice(0, -4);
 						document.querySelector(".touchOne").innerHTML = `
-						<img src="`+ this.gameimg[this.string.slice(3, )] + `"  />`;
-
+						<img src="`+ this.gameimg[this.string.slice(3, )] + `">
+						<div id="touchTwo" *ngIf="end" (click)="touchyes()"></div>`;
 					} else {
 						this.dialogText = this.nowScript[this.countScript++].slice(0, -4);
 						document.querySelector(".gameWindow").innerHTML = `
@@ -580,7 +600,12 @@ export class GamePage {
 					}
 				}
 			} else {
-				this.puzzle();
+				if (this.nowScript[this.countScript].slice(6, ) !== "0") {
+					this.puzzle();
+				} else {
+					this.landmine();
+				}
+
 			}
 		}
 
@@ -662,6 +687,7 @@ export class GamePage {
 					buttons: [
 						{
 							text: '清除',
+							role: 'cancel',
 							handler: data => {
 								console.log('Cancel clicked');
 							}
@@ -669,28 +695,60 @@ export class GamePage {
 						{
 							text: '確認',
 							handler: data => {
-								console.log(this.gameAns[i].indexOf(data.ans));
-								if (this.gameAns[i].indexOf(data.ans) != -1) {
-									this.endProgress(this.progress);
-									if (this.progressEnum.stageA.indexOf(this.progress) != -1) {
-										let j = this.progressEnum.stageA.indexOf(this.progress);
-										this.progress = this.progressEnum.stageA[j + 1];
-									} else if (this.progressEnum.stageB.indexOf(this.progress) != -1) {
-										let j = this.progressEnum.stageB.indexOf(this.progress);
-										this.progress = this.progressEnum.stageB[j + 1];
-									}
-									this.nextplace(this.progress);
-									this.countScript++;
-									this.nextDialogText();
-								} else {
+								if (!data.ans || (Object.prototype.toString.call(data.ans) === '[object Array]' && data.ans.length === 0)) {
 									let toast = this.toastCtrl.create({
-										message: '解答錯誤',
+										message: '請輸入解答',
 										duration: 2000,
 										position: 'middle'
 									});
-
 									toast.present(toast);
+								} else {
+									if (i == 4) {
+										if (data.ans=="自畫像"||data.ans=="兒童樂園"||data.ans=="嘉義公園(一)"||data.ans=="嘉義公園(二)"||data.ans=="嘉義公園(三)"||data.ans=="嘉義公園(四)"||data.ans=="嘉義公園一景"||data.ans=="嘉義公園一隅"||data.ans=="睡蓮") {
+											this.endProgress(this.progress);
+											if (this.progressEnum.stageA.indexOf(this.progress) != -1) {
+												let j = this.progressEnum.stageA.indexOf(this.progress);
+												this.progress = this.progressEnum.stageA[j + 1];
+											} else if (this.progressEnum.stageB.indexOf(this.progress) != -1) {
+												let j = this.progressEnum.stageB.indexOf(this.progress);
+												this.progress = this.progressEnum.stageB[j + 1];
+											}
+											this.nextplace(this.progress);
+											this.countScript++;
+											this.nextDialogText();
+										} else {
+											let toast = this.toastCtrl.create({
+												message: '解答錯誤',
+												duration: 2000,
+												position: 'middle'
+											});
+
+											toast.present(toast);
+										}
+
+									} else if (this.gameAns[i] == data.ans) {
+										this.endProgress(this.progress);
+										if (this.progressEnum.stageA.indexOf(this.progress) != -1) {
+											let j = this.progressEnum.stageA.indexOf(this.progress);
+											this.progress = this.progressEnum.stageA[j + 1];
+										} else if (this.progressEnum.stageB.indexOf(this.progress) != -1) {
+											let j = this.progressEnum.stageB.indexOf(this.progress);
+											this.progress = this.progressEnum.stageB[j + 1];
+										}
+										this.nextplace(this.progress);
+										this.countScript++;
+										this.nextDialogText();
+									} else {
+										let toast = this.toastCtrl.create({
+											message: '解答錯誤',
+											duration: 2000,
+											position: 'middle'
+										});
+
+										toast.present(toast);
+									}
 								}
+
 							}
 						}
 					]
@@ -733,7 +791,7 @@ export class GamePage {
 							text: '確認',
 							handler: data => {
 								console.log(data);
-								if (this.gameAns[i].indexOf(data) != -1) {
+								if (data == "林運") {
 									this.endProgress(this.progress);
 									let j = this.progressEnum.stageC.indexOf(this.progress);
 									this.progress = this.progressEnum.stageC[j + 1];
@@ -784,14 +842,18 @@ export class GamePage {
 	openMenu() {
 		this.navCtrl.push(MenuPage, {});
 	}
+	landmine() {
+		let modal = this.modalCtrl.create(LandminePage);
+		modal.onDidDismiss(() => {
+			this.puzzle();
+		});
+		modal.present();
+	}
 
 	//關卡間gps
 	startTracking(gamelat, gamelng) {
 
 		this.place = "開始"
-		// 中正大學118
-		// gamelat = 23.547995;
-		// gamelng = 120.4588;
 
 		// Background Tracking
 		const config: BackgroundGeolocationConfig = {
@@ -810,93 +872,7 @@ export class GamePage {
 			this.zone.run(() => {
 				this.lat = location.latitude;
 				this.lng = location.longitude;
-			});
 
-		}, (err) => {
-
-			console.log(err);
-
-		});
-
-		// Turn ON the background-geolocation system.
-		this.backgroundGeolocation.start();
-
-
-		// Foreground Tracking
-
-		let options = {
-			frequency: 5000,
-			enableHighAccuracy: true
-		};
-
-		this.watch = this.geolocation.watchPosition(options).filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
-
-			// Run update inside of Angular's zone
-			this.zone.run(() => {
-				this.lat = position.coords.latitude;
-				this.lng = position.coords.longitude;
-				if (Array.isArray(gamelat)) {
-					for (let i = 0; i < gamelat.length; i++) {
-						var distance = this.getFlatternDistance(gamelat[i], gamelng[i], this.lat, this.lng);
-						console.log(distance);
-						if (distance < 150) {
-							this.place = "";
-							this.stopTracking();
-							if (i == 0) {
-								this.setProgress(this.progress);
-								this.loadstageA();
-							} else if (i >= 1 && i <= 7) {
-								this.setProgress(this.progress);
-								this.loadstageB();
-							} else if (i == 8) {
-								this.setProgress(this.progress);
-								this.loadstageC();
-							}
-						}
-					}
-				} else {
-					var distance = this.getFlatternDistance(gamelat, gamelng, this.lat, this.lng);
-					if (distance < 150) {
-						this.place = "";
-						this.stopTracking();
-						if (this.progress == '2') {
-							this.setProgress(this.progress);
-							this.loadMiddle();
-						}
-						if (this.progress == '7') {
-							this.setProgress(this.progress);
-							this.loadEnd();
-						}
-					}
-				}
-			});
-		});
-	}
-
-	//關卡內gps
-	gameTracking(gamelat, gamelng) {
-
-		// 中正大學118
-		// gamelat = 23.547995;
-		// gamelng = 120.4588;
-		this.place = "開始"
-		// Background Tracking
-		const config: BackgroundGeolocationConfig = {
-			desiredAccuracy: 0,
-			stationaryRadius: 20,
-			distanceFilter: 10,
-			debug: true,
-			interval: 2000
-		};
-
-		this.backgroundGeolocation.configure(config).subscribe((location) => {
-
-			console.log('BackgroundGeolocation:  ' + location.latitude + ',' + location.longitude);
-
-			// Run update inside of Angular's zone
-			this.zone.run(() => {
-				this.lat = location.latitude;
-				this.lng = location.longitude;
 			});
 
 		}, (err) => {
@@ -922,8 +898,142 @@ export class GamePage {
 			this.zone.run(() => {
 				this.lat = position.coords.latitude;
 				this.lng = position.coords.longitude;
+
+
+				if (Array.isArray(gamelat)) {
+					console.log("345");
+					for (let i = 0; i < gamelat.length; i++) {
+						var distance = this.getFlatternDistance(gamelat[i], gamelng[i], this.lat, this.lng);
+						console.log(distance);
+						if (distance < 120) {
+							this.place = "";
+							this.stopTracking();
+							if (gamelat[i] == "23.48667") {
+								this.progress = '3';
+								this.setProgress(this.progress);
+								this.loadstageA();
+							} else if (gamelat[i] == "23.48133" || gamelat[i] == "23.48293333430657" || gamelat[i] == "23.48391805163077" || gamelat[i] == "23.48163149596133" || gamelat[i] == "23.4805181204497" || gamelat[i] == "23.48019397738388" || gamelat[i] == "23.48393893130969") {
+								this.progress = '4';
+								this.setProgress(this.progress);
+								this.loadstageB();
+							} else if (gamelat[i] == "23.487297") {
+								this.progress = '5';
+								this.setProgress(this.progress);
+								this.loadstageC();
+							}
+						}
+					}
+				} else {
+					var distance = this.getFlatternDistance(gamelat, gamelng, this.lat, this.lng);
+					console.log("27");
+					if (distance < 120) {
+						this.place = "";
+						this.stopTracking();
+						if (this.progress == '2') {
+							this.setProgress(this.progress);
+							this.loadMiddle();
+						}
+						if (this.progress == '7') {
+							this.setProgress(this.progress);
+							this.loadEnd();
+						}
+					}
+				}
+			});
+		});
+
+		if (this.lat == 0 || this.lng == 0) {
+			let prompt = this.alertCtrl.create({
+				title: '定位',
+				message: '請玩家打開手機GPS定位',
+				buttons: [
+					{
+						text: '了解',
+						handler: data => {
+						}
+					}
+				]
+			});
+			prompt.present();
+		}
+	}
+
+	//關卡內gps
+	gameTracking(gamelat, gamelng) {
+
+		this.place = "開始"
+		// Background Tracking
+		const config: BackgroundGeolocationConfig = {
+			desiredAccuracy: 0,
+			stationaryRadius: 20,
+			distanceFilter: 10,
+			debug: true,
+			interval: 2000
+		};
+
+		this.backgroundGeolocation.configure(config).subscribe((location) => {
+
+			console.log('BackgroundGeolocation:  ' + location.latitude + ',' + location.longitude);
+
+			// Run update inside of Angular's zone
+			this.zone.run(() => {
+				this.lat = location.latitude;
+				this.lng = location.longitude;
+				if (this.lat == 0 || this.lng == 0) {
+					let prompt = this.alertCtrl.create({
+						title: '定位',
+						message: '請玩家打開手機GPS定位',
+						buttons: [
+							{
+								text: '了解',
+								handler: data => {
+								}
+							}
+						]
+					});
+					prompt.present();
+				}
+			});
+
+		}, (err) => {
+
+			console.log(err);
+
+		});
+
+		// Turn ON the background-geolocation system.
+		this.backgroundGeolocation.start();
+
+
+		// Foreground Tracking
+
+		let options = {
+			frequency: 3000,
+			enableHighAccuracy: true
+		};
+
+		this.watch = this.geolocation.watchPosition(options).filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
+
+			// Run update inside of Angular's zone
+			this.zone.run(() => {
+				this.lat = position.coords.latitude;
+				this.lng = position.coords.longitude;
+				if (this.lat == 0 || this.lng == 0) {
+					let prompt = this.alertCtrl.create({
+						title: '定位',
+						message: '請玩家打開手機GPS定位',
+						buttons: [
+							{
+								text: '了解',
+								handler: data => {
+								}
+							}
+						]
+					});
+					prompt.present();
+				}
 				let distance = this.getFlatternDistance(gamelat, gamelng, this.lat, this.lng);
-				if (distance < 150) {
+				if (distance < 120) {
 					this.place = "";
 					this.stopTracking();
 					if (this.progress == '4-1') {
@@ -946,6 +1056,7 @@ export class GamePage {
 		event.stopPropagation();
 		this.place = "";
 		this.stopTracking();
+		console.log(this.progress);
 		if (this.progress == '2') {
 			this.setProgress(this.progress);
 			this.loadMiddle();
@@ -1037,4 +1148,144 @@ export class GamePage {
 		return d * (1 + fl * (h1 * sf * (1 - sg) - h2 * (1 - sf) * sg));
 	}
 
+}
+@Component({
+	selector: 'page-landmine',
+	template: `
+<ion-content class="mymodal" (click)="cancel()">
+<div class = "liststyle">
+  <ion-row>
+    <ion-col id="0,0" (click)="guess('0,0')" center>0</ion-col> 
+    <ion-col id="0,1" (click)="guess('0,1')" center>0</ion-col>  
+    <ion-col id="0,2" (click)="guess('0,2')" center>0</ion-col> 
+	<ion-col id="0,3" (click)="guess('0,3')" center>1</ion-col> 
+	<ion-col id="0,4" (click)="guess('0,4')" center>1</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="1,0" (click)="guess('1,0')" center>2</ion-col> 
+    <ion-col id="1,1" (click)="guess('1,1')" center>3</ion-col>  
+    <ion-col id="1,2" (click)="guess('1,2')" center>3</ion-col> 
+	<ion-col id="1,3" (click)="guess('1,3')" center>4</ion-col> 
+	<ion-col id="1,4" (click)="guess('1,4')" center>2</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="2,0" (click)="guess('2,0')" center>1</ion-col> 
+    <ion-col id="2,1" (click)="guess('2,1')" center>2</ion-col>  
+    <ion-col id="2,2" (click)="guess('2,2')" center>2</ion-col> 
+	<ion-col id="2,3" (click)="guess('2,3')" center>4</ion-col> 
+	<ion-col id="2,4" (click)="guess('2,4')" center>3</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="3,0" (click)="guess('3,0')" center>2</ion-col> 
+    <ion-col id="3,1" (click)="guess('3,1')" center>3</ion-col>  
+    <ion-col id="3,2" (click)="guess('3,2')" center>3</ion-col> 
+	<ion-col id="3,3" (click)="guess('3,3')" center>4</ion-col> 
+	<ion-col id="3,4" (click)="guess('3,4')" center>2</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="4,0" (click)="guess('4,0')" center>2</ion-col> 
+    <ion-col id="4,1" (click)="guess('4,1')" center>3</ion-col>  
+    <ion-col id="4,2" (click)="guess('4,2')" center>2</ion-col> 
+	<ion-col id="4,3" (click)="guess('4,3')" center>3</ion-col> 
+	<ion-col id="4,4" (click)="guess('4,4')" center>2</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="5,0" (click)="guess('5,0')" center>2</ion-col> 
+    <ion-col id="5,1" (click)="guess('5,1')" center>4</ion-col>  
+    <ion-col id="5,2" (click)="guess('5,2')" center>2</ion-col> 
+	<ion-col id="5,3" (click)="guess('5,3')" center>4</ion-col> 
+	<ion-col id="5,4" (click)="guess('5,4')" center>1</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="6,0" (click)="guess('6,0')" center>3</ion-col> 
+    <ion-col id="6,1" (click)="guess('6,1')" center>7</ion-col>  
+    <ion-col id="6,2" (click)="guess('6,2')" center>4</ion-col> 
+	<ion-col id="6,3" (click)="guess('6,3')" center>7</ion-col> 
+	<ion-col id="6,4" (click)="guess('6,4')" center>3</ion-col> 
+  </ion-row>
+   <ion-row>
+    <ion-col id="7,0" (click)="guess('7,0')" center>1</ion-col> 
+    <ion-col id="7,1" (click)="guess('7,1')" center>4</ion-col>  
+    <ion-col id="7,2" (click)="guess('7,2')" center>2</ion-col> 
+	<ion-col id="7,3" (click)="guess('7,3')" center>4</ion-col> 
+	<ion-col id="7,4" (click)="guess('7,4')" center>2</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="8,0" (click)="guess('8,0')" center>3</ion-col> 
+    <ion-col id="8,1" (click)="guess('8,1')" center>5</ion-col>  
+    <ion-col id="8,2" (click)="guess('8,2')" center>5</ion-col> 
+	<ion-col id="8,3" (click)="guess('8,3')" center>6</ion-col> 
+	<ion-col id="8,4" (click)="guess('8,4')" center>4</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="9,0" (click)="guess('9,0')" center>1</ion-col> 
+    <ion-col id="9,1" (click)="guess('9,1')" center>2</ion-col>  
+    <ion-col id="9,2" (click)="guess('9,2')" center>2</ion-col> 
+	<ion-col id="9,3" (click)="guess('9,3')" center>2</ion-col> 
+	<ion-col id="9,4" (click)="guess('9,4')" center>1</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="10,0" (click)="guess('10,0')" center>4</ion-col> 
+    <ion-col id="10,1" (click)="guess('10,1')" center>6</ion-col>  
+    <ion-col id="10,2" (click)="guess('10,2')" center>6</ion-col> 
+	<ion-col id="10,3" (click)="guess('10,3')" center>5</ion-col> 
+	<ion-col id="10,4" (click)="guess('10,4')" center>3</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="11,0" (click)="guess('11,0')" center>1</ion-col> 
+    <ion-col id="11,1" (click)="guess('11,1')" center>3</ion-col>  
+    <ion-col id="11,2" (click)="guess('11,2')" center>3</ion-col> 
+	<ion-col id="11,3" (click)="guess('11,3')" center>3</ion-col> 
+	<ion-col id="11,4" (click)="guess('11,4')" center>2</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="12,0" (click)="guess('12,0')" center>4</ion-col> 
+    <ion-col id="12,1" (click)="guess('12,1')" center>7</ion-col>  
+    <ion-col id="12,2" (click)="guess('12,2')" center>6</ion-col> 
+	<ion-col id="12,3" (click)="guess('12,3')" center>6</ion-col> 
+	<ion-col id="12,4" (click)="guess('12,4')" center>2</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="13,0" (click)="guess('13,0')" center>1</ion-col> 
+    <ion-col id="13,1" (click)="guess('13,1')" center>3</ion-col>  
+    <ion-col id="13,2" (click)="guess('13,2')" center>3</ion-col> 
+	<ion-col id="13,3" (click)="guess('13,3')" center>3</ion-col> 
+	<ion-col id="13,4" (click)="guess('13,4')" center>2</ion-col> 
+  </ion-row>
+  <ion-row>
+    <ion-col id="14,0" (click)="guess('14,0')" center>2</ion-col> 
+    <ion-col id="14,1" (click)="guess('14,1')" center>3</ion-col>  
+    <ion-col id="14,2" (click)="guess('14,2')" center>3</ion-col> 
+	<ion-col id="14,3" (click)="guess('14,3')" center>2</ion-col> 
+	<ion-col id="14,4" (click)="guess('14,4')" center>1</ion-col> 
+  </ion-row>
+</div>
+</ion-content>
+
+`
+})
+
+
+export class LandminePage {
+
+	constructor(public platform: Platform, public params: NavParams, public viewCtrl: ViewController, public http: Http, public alertCtrl: AlertController) {
+	}
+	guess(e) {
+		event.stopPropagation();
+		if (!document.getElementById(e).classList.contains("r")) {
+			document.getElementById(e).classList.add("r");
+			document.getElementById(e).style.backgroundColor = "#C63300";
+		} else if(!document.getElementById(e).classList.contains("g")) {
+			document.getElementById(e).classList.add("g");
+			document.getElementById(e).style.backgroundColor = "#BBFF00";
+		}else{
+			document.getElementById(e).classList.remove("r");
+			document.getElementById(e).classList.remove("g");	
+			document.getElementById(e).style.backgroundColor = "";
+		}
+	}
+
+	cancel() {
+		this.viewCtrl.dismiss();
+	}
 }

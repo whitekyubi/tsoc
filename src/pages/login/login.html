@@ -6,7 +6,7 @@
 -->
 <ion-header>
 
-  <ion-navbar>
+  <ion-navbar color="transparent">
     <ion-title *ngIf="is_login!=true">Login</ion-title>
     <ion-title *ngIf="is_login==true">
         <div class="title">{{user.username}}</div>
@@ -20,22 +20,25 @@
 </ion-header>
 
 
-<ion-content padding>
+<ion-content padding class="content">
   <ion-list *ngIf="is_login!=true">
     <form [formGroup]="loginForm">
-      <ion-item>
-        <ion-label color="dark" stacked>Email</ion-label>
-        <ion-input [value]="email" formControlName="email" type="email" id="email" spellcheck="false" autocapitalize="off">
+      <ion-item class="input" no-lines>
+        <ion-label color="light">Email</ion-label>
+        <ion-input class="input" [value]="email" formControlName="email" type="email" id="email" spellcheck="false" autocapitalize="off" clearOnEdit>
         </ion-input>
       </ion-item>
-      <ion-item>
-        <ion-label color="dark" stacked>password</ion-label>
+      <ion-item class="input password" no-lines>
+        <ion-label color="light">password</ion-label>
         <ion-input [value]="password" formControlName="password" type="password" id="password" spellcheck="false" autocapitalize="off">
         </ion-input>
       </ion-item>
       <button ion-button round full (click)="login()" [disabled]="!loginForm.valid">登入</button>
-      <button ion-button round full clear color="primary" (click)="newUser()">註冊</button>
     </form>
+    <ion-row>
+      <ion-col><button ion-button round full clear color="primary" (click)="newUser()">註冊</button></ion-col>
+      <ion-col><button ion-button round full clear color="primary" (click)="forget()">忘記密碼</button></ion-col>    
+    </ion-row>
   </ion-list>
   <div *ngIf="is_login==true">
     <ion-row>

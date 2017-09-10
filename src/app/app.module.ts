@@ -10,12 +10,12 @@ import { ReviewPage } from '../pages/review-page/review-page';
 import { HomePage } from '../pages/home/home';
 import { HistoryPage } from '../pages/history/history';
 import { TabsPage } from '../pages/tabs/tabs';
-import { Login,RegisterPage } from '../pages/login/login';
+import { Login,RegisterPage,ForgetPage } from '../pages/login/login';
 import { LoginDetailPage } from '../pages/login-detail/login-detail';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { GameListPage } from '../pages/game-list/game-list';
-import { GamePage } from '../pages/game/game';
+import { GamePage,LandminePage } from '../pages/game/game';
 import { MenuPage } from '../pages/menu/menu';
 import { MenuDetailPage } from '../pages/menu-detail/menu-detail';
 import { Geolocation } from '@ionic-native/geolocation';
@@ -23,6 +23,7 @@ import { Camera } from '@ionic-native/camera';
 import { FileTransfer,FileUploadOptions  } from '@ionic-native/file-transfer';
 import { BackgroundGeolocation } from '@ionic-native/background-geolocation';
 import { LocationTracker } from '../providers/location-tracker';
+import { ReCaptchaModule } from 'angular2-recaptcha';
 
 @NgModule({
   declarations: [
@@ -39,12 +40,15 @@ import { LocationTracker } from '../providers/location-tracker';
     MenuDetailPage,
     LoginDetailPage,
     HistoryPage,
-    ReviewPage
+    ReviewPage,
+    ForgetPage,
+    LandminePage
   ],
   imports: [
     BrowserModule,
     HttpModule,
     JsonpModule,
+    ReCaptchaModule,
     IonicModule.forRoot(MyApp),
     IonicStorageModule.forRoot()
   ],
@@ -63,7 +67,9 @@ import { LocationTracker } from '../providers/location-tracker';
     MenuDetailPage,
     LoginDetailPage,
     HistoryPage,
-    ReviewPage
+    ReviewPage,
+    ForgetPage,
+    LandminePage
   ],
   providers: [
     LocationTracker,
